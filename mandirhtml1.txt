@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background-image: url('ram1.jpg'); /* Add the path to your background image */
+            background-size: cover;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #overlay {
+            
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(236, 82, 5, 0.419); /* Semi-transparent white */
+            z-index: -1; /* Place the overlay behind other elements */
+        }
+
+        #game-container {
+            position: relative;
+            width: 400px;
+            height: 600px;
+            border: 1px solid #ccc;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .block {
+            position: absolute;
+        }
+
+        #bulldozer {
+            height: 100px;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #masjid {
+            width: 400px;
+            height: 250px;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background-size: cover;
+            transition: background-image 0.5s;
+        }
+
+        #controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-gap: 10px;
+            margin-top: 20px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50; /* Green color */
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+
+</head>
+<body>
+    
+    <div id="game-container">
+        <div id="overlay"></div>
+        <div id="bulldozer" class="block"><img src="bull.png" alt="Bulldozer" style="width: 100%; height: 100%;"></div>
+        <div id="masjid" class="block" style="background-image: url('masjid.jpg');"></div>
+    </div>
+    <div id="controls">
+        <button class="button" onclick="moveUp()">Up</button>
+        <button class="button" onclick="moveLeft()">Left</button>
+        <button class="button" onclick="moveRight()">Right</button>
+        <button class="button" onclick="moveDown()">Down</button>
+    </div>
+
+    <script>
+        const bulldozer = document.getElementById('bulldozer');
+        const masjid = document.getElementById('masjid');
+
+        function moveUp() {
+            const currentPosition = parseFloat(window.getComputedStyle(bulldozer).bottom);
+            const newPosition = Math.min(currentPosition + 50, 550);
+            bulldozer.style.bottom = newPosition + 'px';
+
+            checkCollision();
+        }
+
+        function moveDown() {
+            const currentPosition = parseFloat(window.getComputedStyle(bulldozer).bottom);
+            const newPosition = Math.max(currentPosition - 50, 0);
+            bulldozer.style.bottom = newPosition + 'px';
+
+            checkCollision();
+        }
+
+        function moveLeft() {
+            const currentPosition = parseFloat(window.getComputedStyle(bulldozer).left);
+            const newPosition = Math.max(currentPosition - 50, 0);
+            bulldozer.style.left = newPosition + 'px';
+
+            checkCollision();
+        }
+
+        function moveRight() {
+            const currentPosition = parseFloat(window.getComputedStyle(bulldozer).left);
+            const containerWidth = parseFloat(window.getComputedStyle(document.getElementById('game-container')).width);
+            const bulldozerWidth = parseFloat(window.getComputedStyle(bulldozer).width);
+            const newPosition = Math.min(currentPosition + 50, containerWidth - bulldozerWidth);
+            bulldozer.style.left = newPosition + 'px';
+
+            checkCollision();
+        }
+
+        function checkCollision() {
+            const bulldozerRect = bulldozer.getBoundingClientRect();
+            const masjidRect = masjid.getBoundingClientRect();
+
+            if (
+                bulldozerRect.left < masjidRect.right &&
+                bulldozerRect.right > masjidRect.left &&
+                bulldozerRect.top < masjidRect.bottom &&
+                bulldozerRect.bottom > masjidRect.top
+            ) {
+                masjid.style.backgroundImage = "url('ram_mandir.jpg')"; // Replace with Ram Mandir image
+            }
+        }
+    </script>
+</body>
+</html>

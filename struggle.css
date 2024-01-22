@@ -1,0 +1,87 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    overflow: hidden;
+  }
+  
+  .struggle-container {
+    background-image: url('mandir5.jpg'); 
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .content-container {
+    font-size: medium;
+    max-width: 800px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    overflow: hidden; 
+  }
+  
+  .image-container {
+    overflow: hidden;
+    max-height: 250px;
+  }
+  
+  #struggleImage {
+    width: 100%;
+    height: auto;
+    transition: opacity 0.5s ease;
+  }
+  
+  .text-container {
+    font-size: medium;
+    padding: 1px;
+    text-align: center;
+  }
+  
+  .struggle-text h3 {
+    font-size: medium;
+    margin: 0;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  button {
+    background-color: #FF9933;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 1.5em;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #FFC266;
+  }
+
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  #mandirButton {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.3s ease; 
+  }
+  
+  #mandirButton:hover {
+    transform: scale(1.1); 
+  }
+
+  

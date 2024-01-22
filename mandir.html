@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background-image: url('ram9.jpeg');
+            background-size: cover;
+            height: 100vh;
+            
+            margin: 0;
+        }
+
+        #overlay {
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(236, 82, 5, 0.419);
+            z-index: -1; 
+        }
+
+        #game-container {
+            position: relative;
+            width: 380px;
+            height: 560px;
+            border: 1px solid #ccc;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .block {
+            position: absolute;
+            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+        }
+
+        #bulldozer {
+            height: 100px;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #masjid {
+            width: 370px;
+            height: 250px;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background-size: cover;
+            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+        }
+
+        #mandir {
+            width: 370px;
+            height: 250px;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%) translateY(200%);
+            background-size: cover;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        #controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-gap: 10px;
+            margin-top: 20px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50; 
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+
+        .hit {
+            animation: flyUp 1.5s forwards;
+        }
+
+        @keyframes flyUp {
+            to {
+                transform: translateY(-200%);
+            }
+        }
+
+        #restart-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #f32152; 
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+
+</head>
+
+<body>
+<div class="content-container">
+
+
+    <div id="game-container">
+        <div id="overlay"></div>
+        <div id="bulldozer" class="block"><img src="bull.png" alt="Bulldozer" style="width: 100%; height: 100%;"></div>
+        <div id="masjid" class="block" style="background-image: url('masjid.jpg');"></div>
+        <div id="mandir" class="block" style="background-image: url('mandir3.jpg');"></div>
+    </div>
+    <div id="controls">
+        <button class="button" onclick="moveUp()">Up</button>
+        <button class="button" onclick="moveLeft()">Left</button>
+        <button class="button" onclick="moveRight()">Right</button>
+        <button class="button" onclick="moveDown()">Down</button>
+        <button id="restart-btn" onclick="restartGame()">Restart</button>
+    </div>
+</div>
+   
+
+
+
+  
+    <audio id="bulldozer-sound" src="bulldozer.mp3"></audio>
+    <audio id="ram-ayenge-sound" src="ram_ayenge.mp3" loop></audio>
+    <audio id="blast-sound" src="blast.mp3"></audio>
+
+    <script>
+        const bulldozer = document.getElementById('bulldozer');
+        const masjid = document.getElementById('masjid');
+        const mandir = document.getElementById('mandir');
+        const bulldozerSound = document.getElementById('bulldozer-sound');
+        const ramAyengeSound = document.getElementById('ram-ayenge-sound');
+        const blastSound = document.getElementById('blast-sound');
+
+
+        function moveUp() {
+            playBulldozerSound();
+            const currentPosition = parseFloat(window.getComputedStyle(bulldozer).bottom);
+            const newPosition = Math.min(currentPosition + 50, 550);
+            bulldozer.style.bottom = newPosition + 'px';
+
+            checkCollision();
+        }
+
+        function moveDown() {
+            playBulldozerSound();
+            const currentPosition = parseFloat(window.getComputedStyle(bulldozer).bottom);
+            const newPosition = Math.max(currentPosition - 50, 0);
+            bulldozer.style.bottom = newPosition + 'px';
+
+            checkCollision();
+        }
+
+        function moveLeft() {
+            playBulldozerSound();
+            const currentPosition = parseFloat(window.getComputedStyle(bulldozer).left);
+            const newPosition = Math.max(currentPosition - 50, 0);
+            bulldozer.style.left = newPosition + 'px';
+
+            checkCollision();
+        }
+
+        function moveRight() {
+            playBulldozerSound();
+            const currentPosition = parseFloat(window.getComputedStyle(bulldozer).left);
+            const containerWidth = parseFloat(window.getComputedStyle(document.getElementById('game-container')).width);
+            const bulldozerWidth = parseFloat(window.getComputedStyle(bulldozer).width);
+            const newPosition = Math.min(currentPosition + 50, containerWidth - bulldozerWidth);
+            bulldozer.style.left = newPosition + 'px';
+
+            checkCollision();
+        }
+
+        function checkCollision() {
+            const bulldozerRect = bulldozer.getBoundingClientRect();
+            const masjidRect = masjid.getBoundingClientRect();
+
+            if (
+                bulldozerRect.left < masjidRect.right &&
+                bulldozerRect.right > masjidRect.left &&
+                bulldozerRect.top < masjidRect.bottom &&
+                bulldozerRect.bottom > masjidRect.top
+            ) {
+                
+                if (!masjid.classList.contains('hit')) {
+                    masjid.classList.add('hit');
+                    playBlast();
+                    playRamAyengeSound();
+                    
+                    setTimeout(() => {
+                        masjid.style.opacity = '0';
+                        mandir.style.opacity = '1';
+                        mandir.style.transform = 'translateY(0)';
+                        mandir.style.transform = 'translateX(-50%)';
+                        document.body.style.backgroundImage = "url('mandir4.jpg')"; // Change background image
+                    }, 2000);
+                }
+            }
+        }
+
+        function playBulldozerSound() {
+            bulldozerSound.play();
+        }
+        function playBlast() {
+            blastSound.play();
+        }
+        function playRamAyengeSound() {
+            ramAyengeSound.play();
+        }
+
+        function restartGame() {
+            location.reload();
+        }
+    </script>
+<p style = "color: white";>HINT : use the bulldozer </p>
+</body>
+</html>
